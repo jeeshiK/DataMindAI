@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DataMind AI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#07090f;color:#e2e8f0;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
+.screen.on{display:flex}
+.logo{font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* KEY SCREEN */
+#sk{flex-direction:column;gap:1.25rem;padding:2rem;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(99,102,241,.1),transparent 70%)}
+.kcard{width:min(480px,100%);background:#0d1117;border:1px solid #1e2a3a;border-radius:20px;padding:2rem;display:flex;flex-direction:column;gap:1rem}
+.kicon{font-size:2.5rem;text-align:center}
+.ktit{font-size:1.25rem;font-weight:700;text-align:center}
+.ksub{color:#64748b;font-size:.82rem;text-align:center;line-height:1.6}
+.kinp{background:#07090f;border:1px solid #1e2a3a;border-radius:10px;padding:.7rem 1rem;color:#e2e8f0;font-size:.85rem;outline:none;width:100%}
+.kinp:focus{border-color:#6366f1}
+.kbtn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;padding:.75rem;border-radius:10px;font-weight:700;cursor:pointer;font-size:.9rem}
+.kbtn:hover{opacity:.9}
+.klink{color:#475569;font-size:.73rem;text-align:center}
+.klink a{color:#818cf8;text-decoration:none}
+.kfree{display:inline-block;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:#4ade80;padding:.2rem .6rem;border-radius:6px;font-size:.72rem;font-weight:600;margin-left:.4rem}
+
+/* UPLOAD */
+#su{background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(99,102,241,.1),transparent 70%);flex-direction:column;gap:2rem;padding:2rem}
+.ubox{width:min(540px,100%);border:2px dashed #2d3748;border-radius:20px;padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:.25s;background:#0d1117}
+.ubox:hover,.ubox.drag{border-color:#6366f1;background:rgba(99,102,241,.05)}
+.ui{font-size:2.8rem;margin-bottom:1rem}
+.ut{font-size:1.4rem;font-weight:700;margin-bottom:.4rem}
+.us{color:#64748b;font-size:.88rem;margin-bottom:1.5rem}
+.ubtn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;padding:.7rem 2rem;border-radius:10px;font-weight:600;cursor:pointer;font-size:.9rem}
+.ufmt{color:#475569;font-size:.72rem;margin-top:.75rem}
+#fi{display:none}
+
+/* ANALYZING */
+#sa{flex-direction:column;gap:1.5rem}
+.at{font-size:1.4rem;font-weight:700;text-align:center}
+.steps{display:flex;flex-direction:column;gap:.6rem;width:360px}
+.step{display:flex;align-items:center;gap:.9rem;padding:.7rem 1rem;border-radius:10px;background:#0d1117;border:1px solid #1e2a3a}
+.si{width:30px;height:30px;border-radius:50%;background:#1e2a3a;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.step.go .si{animation:pulse 1s infinite;background:rgba(99,102,241,.3)}
+.step.done .si{background:rgba(74,222,128,.15)}
+.st{font-size:.85rem}
+.step.go .st{color:#818cf8}
+.step.done .st{color:#4ade80}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* GOAL */
+#sg{flex-direction:column;gap:1.1rem;padding:2rem;max-width:560px;width:100%}
+.glbl{font-size:.7rem;color:#6366f1;letter-spacing:.18em;text-transform:uppercase;font-weight:600;text-align:center}
+.gpr{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+.gchip{background:#0d1117;border:1px solid #1e2a3a;border-radius:8px;padding:.35rem .85rem;font-size:.78rem}
+.gchip b{color:#818cf8}
+.gtit{font-size:1.4rem;font-weight:700;text-align:center}
+.gsub{color:#64748b;font-size:.85rem;text-align:center}
+.gopts{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;width:100%}
+.gopt{background:#0d1117;border:1px solid #1e2a3a;border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:.2s;text-align:left}
+.gopt:hover{border-color:#6366f1;background:rgba(99,102,241,.05)}
+.goi{font-size:1.4rem;margin-bottom:.3rem}
+.got{font-size:.85rem;font-weight:600}
+.god{font-size:.73rem;color:#64748b}
+.gci{display:flex;gap:.5rem;width:100%}
+.ginp{flex:1;background:#0d1117;border:1px solid #1e2a3a;border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-size:.85rem;outline:none}
+.ginp:focus{border-color:#6366f1}
+.gsub-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;padding:.6rem 1.1rem;border-radius:10px;font-weight:700;cursor:pointer}
+
+/* APP */
+#sa2{flex-direction:row;align-items:stretch}
+#sb{width:260px;flex-shrink:0;background:#0b0e16;border-right:1px solid #1a2035;display:flex;flex-direction:column;overflow:hidden}
+.sbl{padding:1rem 1.25rem;font-weight:800;font-size:.95rem;background:linear-gradient(135deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid #1a2035}
+.sbs{padding:.9rem 1.25rem;border-bottom:1px solid #1a2035}
+.sblbl{font-size:.63rem;text-transform:uppercase;letter-spacing:.15em;color:#475569;margin-bottom:.5rem;font-weight:600}
+.sr{display:flex;justify-content:space-between;margin-bottom:.3rem;font-size:.8rem}
+.sv{color:#818cf8;font-weight:600}
+.dbadge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);color:#818cf8;padding:.25rem .65rem;border-radius:999px;font-size:.75rem;font-weight:600;margin-top:.4rem}
+.collist{flex:1;overflow-y:auto;padding:.9rem 1.25rem;scrollbar-width:thin;scrollbar-color:#1a2035 transparent}
+.ci{margin-bottom:.7rem}
+.cn{font-size:.78rem;font-weight:600;margin-bottom:.2rem;display:flex;justify-content:space-between;align-items:center}
+.ct{font-size:.65rem;padding:.1rem .4rem;border-radius:4px}
+.ct.numeric{background:rgba(6,182,212,.12);color:#67e8f9}
+.ct.categorical{background:rgba(139,92,246,.12);color:#c4b5fd}
+.ct.date{background:rgba(251,191,36,.12);color:#fde68a}
+.cbar{height:3px;background:#1a2035;border-radius:2px;overflow:hidden}
+.cfill{height:100%;background:linear-gradient(90deg,#6366f1,#06b6d4);border-radius:2px}
+.cmt{font-size:.68rem;color:#475569}
+#ca{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.ch{padding:.9rem 1.25rem;border-bottom:1px solid #1a2035;display:flex;align-items:center;gap:.75rem;background:#0b0e16}
+.chav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff}
+.cht{font-weight:700;font-size:.9rem}
+.chs{font-size:.72rem;color:#475569}
+.msgs{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1rem;scrollbar-width:thin;scrollbar-color:#1a2035 transparent}
+.msg{display:flex;gap:.65rem;max-width:85%}
+.msg.u{align-self:flex-end;flex-direction:row-reverse}
+.mav{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700}
+.msg.b .mav{background:linear-gradient(135deg,#6366f1,#06b6d4);color:#fff}
+.msg.u .mav{background:#1e2a3a;color:#94a3b8}
+.mc{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.mb{padding:.8rem 1rem;border-radius:14px;font-size:.84rem;line-height:1.65;word-break:break-word}
+.msg.b .mb{background:#0d1117;border:1px solid #1a2035;border-radius:4px 14px 14px 14px}
+.msg.u .mb{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 4px 14px 14px}
+.mb p{margin-bottom:.4rem}.mb p:last-child{margin-bottom:0}
+.mb strong{color:#67e8f9}
+.mb ul{padding-left:1.1rem;margin:.2rem 0}
+.mb li{margin-bottom:.2rem}
+.chart-wrap{background:#0d1117;border:1px solid #1a2035;border-radius:12px;padding:.9rem;max-width:480px}
+.chart-ttl{font-size:.75rem;color:#475569;margin-bottom:.6rem;font-weight:600}
+.tdots{display:flex;align-items:center;gap:.3rem;padding:.4rem .2rem}
+.dot{width:6px;height:6px;border-radius:50%;background:#475569;animation:bop 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bop{0%,80%,100%{transform:scale(1)}40%{transform:scale(1.5)}}
+.suggs{display:flex;gap:.45rem;flex-wrap:wrap;padding:.6rem 1.25rem .2rem;border-top:1px solid #1a2035}
+.sg{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);color:#94a3b8;padding:.28rem .7rem;border-radius:999px;font-size:.73rem;cursor:pointer;transition:.2s;white-space:nowrap}
+.sg:hover{background:rgba(99,102,241,.18);color:#e2e8f0}
+.inrow{padding:.85rem 1.25rem;display:flex;gap:.65rem;align-items:center;border-top:1px solid #1a2035;background:#0b0e16}
+#mi{flex:1;background:#0d1117;border:1px solid #1a2035;border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-size:.85rem;outline:none;transition:.2s}
+#mi:focus{border-color:#6366f1}
+#sb2{width:38px;height:38px;border-radius:10px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#sb2:hover{transform:scale(1.06)}
+@media(max-width:650px){#sb{display:none}}
+</style>
+</head>
+<body>
+
+<!-- KEY SCREEN -->
+<div id="sk" class="screen on">
+  <div class="logo" style="position:absolute;top:2rem;left:50%;transform:translateX(-50%)">⚡ DataMind AI</div>
+  <div class="kcard">
+    <div class="kicon">🔑</div>
+    <div class="ktit">Enter your Gemini API Key <span class="kfree">FREE</span></div>
+    <div class="ksub">Google Gemini is completely free to use.<br/>Your key stays in memory only — never stored or shared.</div>
+    <input class="kinp" id="ki" type="password" placeholder="AIzaSy..." onkeydown="if(event.key==='Enter')setKey()"/>
+    <button class="kbtn" onclick="setKey()">Start Analyzing →</button>
+    <div class="klink">Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> → Create API Key</div>
+  </div>
+</div>
+
+<!-- UPLOAD -->
+<div id="su" class="screen">
+  <div class="logo">⚡ DataMind AI</div>
+  <div class="ubox" id="ubox" onclick="document.getElementById('fi').click()">
+    <div class="ui">📂</div>
+    <div class="ut">Drop your dataset here</div>
+    <div class="us">Upload any CSV — health, finance, weather, retail, science &amp; more</div>
+    <button class="ubtn" onclick="event.stopPropagation();document.getElementById('fi').click()">Choose CSV File</button>
+    <div class="ufmt">Drag &amp; drop supported · All domains welcome</div>
+  </div>
+  <input type="file" id="fi" accept=".csv"/>
+</div>
+
+<!-- ANALYZING -->
+<div id="sa" class="screen">
+  <div class="at">🧠 Analyzing your dataset…</div>
+  <div class="steps">
+    <div class="step go" id="p0"><div class="si">📖</div><div class="st">Reading dataset structure</div></div>
+    <div class="step" id="p1"><div class="si">🔍</div><div class="st">Profiling columns &amp; data types</div></div>
+    <div class="step" id="p2"><div class="si">🎯</div><div class="st">Detecting domain &amp; patterns</div></div>
+    <div class="step" id="p3"><div class="si">⚡</div><div class="st">Preparing AI context</div></div>
+  </div>
+</div>
+
+<!-- GOAL -->
+<div id="sg" class="screen">
+  <div class="glbl">Dataset Ready</div>
+  <div class="gpr" id="gpr"></div>
+  <div class="gtit">What's your goal? 🎯</div>
+  <div class="gsub">This tailors the entire analysis to your needs</div>
+  <div class="gopts">
+    <div class="gopt" onclick="go('Explore and understand this dataset — give me a full EDA, key insights, patterns, and summary statistics')">
+      <div class="goi">🔭</div><div class="got">Explore &amp; Understand</div><div class="god">Full EDA, patterns, insights</div>
+    </div>
+    <div class="gopt" onclick="go('Build predictions and ML models — I want to forecast or classify outcomes from this data')">
+      <div class="goi">🤖</div><div class="got">Build Predictions</div><div class="god">ML models, forecasting</div>
+    </div>
+    <div class="gopt" onclick="go('Find hidden patterns, correlations, and anomalies in this data')">
+      <div class="goi">🔍</div><div class="got">Find Patterns</div><div class="god">Correlations, anomalies</div>
+    </div>
+    <div class="gopt" onclick="go('Clean and prepare this data — find issues, missing values, outliers and how to fix them')">
+      <div class="goi">🧹</div><div class="got">Clean &amp; Prepare</div><div class="god">Data quality, null values</div>
+    </div>
+  </div>
+  <div class="gci">
+    <input class="ginp" id="gi" placeholder="Or describe your own goal…" onkeydown="if(event.key==='Enter')customGo()"/>
+    <button class="gsub-btn" onclick="customGo()">→</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="sa2" class="screen">
+  <div id="sb">
+    <div class="sbl">⚡ DataMind AI</div>
+    <div class="sbs">
+      <div class="sblbl">Dataset</div>
+      <div class="sr"><span>Rows</span><span class="sv" id="sbr">—</span></div>
+      <div class="sr"><span>Columns</span><span class="sv" id="sbc">—</span></div>
+      <div class="sr"><span>Missing</span><span class="sv" id="sbm">—</span></div>
+      <div><span class="dbadge" id="sbd">—</span></div>
+    </div>
+    <div class="collist" id="clist"></div>
+  </div>
+  <div id="ca">
+    <div class="ch">
+      <div class="chav">AI</div>
+      <div><div class="cht">DataMind Assistant</div><div class="chs" id="csub">Ready</div></div>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div class="suggs" id="suggs"></div>
+    <div class="inrow">
+      <input id="mi" placeholder="Ask anything about your data…" onkeydown="if(event.key==='Enter')send()"/>
+      <button id="sb2" onclick="send()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const S={data:[],fields:[],profile:{},domain:'',emoji:'',goal:'',ctx:'',hist:[],cid:0,key:''};
+const DOMS={
+  health:{k:['patient','diagnosis','disease','blood','hospital','age','bmi','glucose','bp','medical','clinical','symptom','treatment','mortality','cancer','diabetes','heart'],e:'🏥'},
+  finance:{k:['price','revenue','profit','loss','stock','transaction','amount','salary','income','expense','budget','investment','market','trade','bank','loan','credit'],e:'💰'},
+  weather:{k:['temperature','humidity','wind','rain','precipitation','forecast','pressure','cloud','storm','climate','celsius','fahrenheit','weather'],e:'🌤️'},
+  retail:{k:['product','sales','customer','order','inventory','store','purchase','quantity','category','discount','shipping','review'],e:'🛒'},
+  hr:{k:['employee','department','hire','attrition','performance','satisfaction','manager','tenure','promotion','resignation'],e:'👥'}
+};
+
+function detectDomain(fields){
+  const s=fields.join(' ').toLowerCase();
+  let best={name:'General Data',e:'📊',score:0};
+  for(const[n,d]of Object.entries(DOMS)){
+    const sc=d.k.filter(k=>s.includes(k)).length;
+    if(sc>best.score)best={name:n[0].toUpperCase()+n.slice(1),e:d.e,score:sc};
+  }
+  return best;
+}
+
+function profileData(data,fields){
+  const p={};let tm=0;
+  fields.forEach(col=>{
+    const vals=data.map(r=>r[col]);
+    const filled=vals.filter(v=>v!==null&&v!==undefined&&v!=='');
+    const missing=data.length-filled.length;tm+=missing;
+    const nums=filled.map(v=>parseFloat(v)).filter(n=>!isNaN(n));
+    const isNum=nums.length/Math.max(filled.length,1)>0.75;
+    if(isNum&&nums.length>0){
+      const mean=nums.reduce((a,b)=>a+b,0)/nums.length;
+      p[col]={type:'numeric',missing,min:+Math.min(...nums).toFixed(2),max:+Math.max(...nums).toFixed(2),mean:+mean.toFixed(2),count:nums.length};
+    } else {
+      const uniq=new Set(filled.map(v=>String(v).trim())).size;
+      const cnts={};filled.forEach(v=>{const k=String(v).trim();cnts[k]=(cnts[k]||0)+1;});
+      const top=Object.entries(cnts).sort((a,b)=>b[1]-a[1])[0];
+      const isDate=filled.filter(v=>!isNaN(Date.parse(v))).length/filled.length>0.7;
+      p[col]={type:isDate?'date':'categorical',missing,unique:uniq,topValue:top?top[0]:'',topCount:top?top[1]:0,count:filled.length};
+    }
+  });
+  p._tm=tm;return p;
+}
+
+function buildCtx(data,fields,profile,domain,goal){
+  let c=`DATASET PROFILE:\n- Shape: ${data.length} rows × ${fields.length} columns\n- Domain: ${domain}\n- Goal: ${goal}\n\nCOLUMNS:\n`;
+  fields.forEach(col=>{
+    const p=profile[col];
+    if(p.type==='numeric') c+=`  * ${col} [numeric]: min=${p.min}, max=${p.max}, mean=${p.mean}, missing=${p.missing}\n`;
+    else if(p.type==='date') c+=`  * ${col} [date]: ${p.count} values, missing=${p.missing}\n`;
+    else c+=`  * ${col} [categorical]: ${p.unique} unique, top="${p.topValue}"(${p.topCount}x), missing=${p.missing}\n`;
+  });
+  c+=`\nSAMPLE (first 5 rows):\n${JSON.stringify(data.slice(0,5),null,1)}\n`;
+  return c;
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+
+// KEY
+function setKey(){
+  const v=document.getElementById('ki').value.trim();
+  if(!v){alert('Please enter your Gemini API key.');return;}
+  S.key=v;show('su');
+}
+
+// UPLOAD
+document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
+const ubox=document.getElementById('ubox');
+ubox.addEventListener('dragover',e=>{e.preventDefault();ubox.classList.add('drag')});
+ubox.addEventListener('dragleave',()=>ubox.classList.remove('drag'));
+ubox.addEventListener('drop',e=>{e.preventDefault();ubox.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
+
+function handleFile(file){
+  show('sa');
+  Papa.parse(file,{
+    header:true,dynamicTyping:false,skipEmptyLines:true,
+    complete(res){S.data=res.data;S.fields=res.meta.fields||[];runAnalysis();},
+    error(){show('su');alert('Could not read this file. Please try a valid CSV.')}
+  });
+}
+
+async function runAnalysis(){
+  for(let i=0;i<4;i++){
+    await delay(650);
+    const el=document.getElementById(`p${i}`);
+    el.classList.remove('go');el.classList.add('done');
+    el.querySelector('.si').textContent='✅';
+    if(i<3)document.getElementById(`p${i+1}`).classList.add('go');
+  }
+  await delay(400);
+  S.profile=profileData(S.data,S.fields);
+  const d=detectDomain(S.fields);
+  S.domain=d.name;S.emoji=d.e;
+  showGoal();
+}
+
+function showGoal(){
+  document.getElementById('gpr').innerHTML=
+    `<div class="gchip">Rows <b>${S.data.length.toLocaleString()}</b></div>
+     <div class="gchip">Columns <b>${S.fields.length}</b></div>
+     <div class="gchip">Missing <b>${S.profile._tm}</b></div>
+     <div class="gchip">Domain <b>${S.emoji} ${S.domain}</b></div>`;
+  show('sg');
+}
+
+function go(goal){S.goal=goal;launch()}
+function customGo(){const v=document.getElementById('gi').value.trim();if(v)go(v)}
+
+function launch(){
+  S.ctx=buildCtx(S.data,S.fields,S.profile,S.domain,S.goal);
+  fillSidebar();show('sa2');
+  document.getElementById('csub').textContent=`${S.emoji} ${S.domain} · ${S.data.length.toLocaleString()} rows`;
+  setSuggs();initChat();
+}
+
+function fillSidebar(){
+  document.getElementById('sbr').textContent=S.data.length.toLocaleString();
+  document.getElementById('sbc').textContent=S.fields.length;
+  document.getElementById('sbm').textContent=S.profile._tm;
+  document.getElementById('sbd').textContent=`${S.emoji} ${S.domain}`;
+  const cl=document.getElementById('clist');cl.innerHTML='';
+  S.fields.forEach(col=>{
+    const p=S.profile[col];
+    const fp=Math.round(((S.data.length-p.missing)/S.data.length)*100);
+    const el=document.createElement('div');el.className='ci';
+    el.innerHTML=`<div class="cn"><span>${col}</span><span class="ct ${p.type}">${p.type}</span></div>
+    <div class="cbar"><div class="cfill" style="width:${fp}%"></div></div>
+    ${p.missing>0?`<div class="cmt">${p.missing} missing (${100-fp}%)</div>`:''}`;
+    cl.appendChild(el);
+  });
+}
+
+function setSuggs(){
+  const s=['What are the key insights?','Show me a distribution chart','Any missing value issues?','What columns correlate most?','Predict future trends'];
+  document.getElementById('suggs').innerHTML=s.map(t=>`<span class="sg" onclick="useSug('${t.replace(/'/g,"\\'")}')"> ${t}</span>`).join('');
+}
+function useSug(t){document.getElementById('mi').value=t;send()}
+
+function sysPrompt(){
+  return `You are DataMind AI, an expert data scientist assistant embedded in a data analysis tool.
+
+${S.ctx}
+
+RULES:
+- Answer like a senior data scientist — insightful, clear, plain English
+- Use **bold** for key terms, bullet lists for multiple items
+- When generating charts output EXACTLY this format on its own line: [CHART:{"type":"bar","title":"Chart Title","labels":["A","B"],"datasets":[{"label":"Series","data":[10,20]}]}]
+- Chart types supported: bar, line, pie, doughnut
+- Always suggest 1-2 next steps after answering
+- For predictions: reason from data patterns, give a clear estimate with explanation
+- Keep responses focused and scannable
+- Domain: ${S.domain}`;
+}
+
+// Gemini conversation history: roles are "user" and "model"
+async function callAI(q){
+  S.hist.push({role:'user',parts:[{text:q}]});
+  showTyping();
+  try{
+    const r=await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${S.key}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          systemInstruction:{parts:[{text:sysPrompt()}]},
+          contents:S.hist
+        })
+      }
+    );
+    const d=await r.json();
+    killTyping();
+    if(d.error){
+      addMsg(`⚠️ ${d.error.message||'API error'}${d.error.code===400?' — Check your API key.':''}`, 'b');
+      S.hist.pop();return;
+    }
+    const rep=d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!rep){addMsg('⚠️ Empty response. Please try again.','b');S.hist.pop();return;}
+    S.hist.push({role:'model',parts:[{text:rep}]});
+    addMsg(rep,'b');
+  }catch(e){
+    killTyping();
+    addMsg(`⚠️ Network error: ${e.message}`,'b');
+    S.hist.pop();
+  }
+}
+
+function addMsg(txt,role){
+  const el=document.createElement('div');el.className=`msg ${role}`;
+  if(role==='b'){
+    const parts=parseParts(txt);
+    let html='';
+    parts.forEach(p=>{if(p.t==='text'&&p.v.trim())html+=`<div class="mb">${fmt(p.v.trim())}</div>`;});
+    el.innerHTML=`<div class="mav">AI</div><div class="mc">${html}</div>`;
+    document.getElementById('msgs').appendChild(el);
+    parts.filter(p=>p.t==='chart').forEach(p=>{
+      const cw=document.createElement('div');cw.className='chart-wrap';
+      const id=`c${++S.cid}`;
+      cw.innerHTML=`<div class="chart-ttl">${p.v.title||'Chart'}</div><canvas id="${id}" style="max-height:260px"></canvas>`;
+      el.querySelector('.mc').appendChild(cw);
+      setTimeout(()=>drawChart(id,p.v),80);
+    });
+  } else {
+    el.innerHTML=`<div class="mav">U</div><div class="mb" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:14px 4px 14px 14px">${txt}</div>`;
+    document.getElementById('msgs').appendChild(el);
+  }
+  const m=document.getElementById('msgs');m.scrollTop=m.scrollHeight;
+}
+
+function parseParts(txt){
+  const parts=[],re=/\[CHART:([\s\S]*?)\]/g;
+  let last=0,m;
+  while((m=re.exec(txt))!==null){
+    if(m.index>last)parts.push({t:'text',v:txt.slice(last,m.index)});
+    try{parts.push({t:'chart',v:JSON.parse(m[1])})}catch{parts.push({t:'text',v:m[0]})}
+    last=m.index+m[0].length;
+  }
+  if(last<txt.length)parts.push({t:'text',v:txt.slice(last)});
+  return parts;
+}
+
+function fmt(t){
+  t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/^#{1,3} (.*)/gm,'<strong style="display:block;margin:.4rem 0 .2rem;font-size:.9rem">$1</strong>');
+  t=t.replace(/^[-•*] (.*)/gm,'<li>$1</li>');
+  t=t.replace(/(<li>.*<\/li>\n?)+/gs,s=>`<ul>${s}</ul>`);
+  t=t.replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>');
+  if(!t.startsWith('<'))t='<p>'+t+'</p>';
+  return t;
+}
+
+function drawChart(id,cfg){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  const clrs=['rgba(99,102,241,.75)','rgba(6,182,212,.75)','rgba(139,92,246,.75)','rgba(74,222,128,.75)','rgba(251,191,36,.75)'];
+  new Chart(ctx,{
+    type:cfg.type||'bar',
+    data:{labels:cfg.labels||[],datasets:(cfg.datasets||[]).map((d,i)=>({...d,backgroundColor:clrs[i%clrs.length],borderColor:clrs[i%clrs.length].replace('.75','1'),borderWidth:1,tension:.4}))},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
+      scales:(cfg.type!=='pie'&&cfg.type!=='doughnut')?{x:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#64748b',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}:{}}
+  });
+}
+
+function showTyping(){
+  const el=document.createElement('div');el.className='msg b';el.id='typ';
+  el.innerHTML=`<div class="mav">AI</div><div class="mb"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  document.getElementById('msgs').appendChild(el);
+  document.getElementById('msgs').scrollTop=9999;
+}
+function killTyping(){const t=document.getElementById('typ');if(t)t.remove()}
+
+async function initChat(){
+  await callAI(`The user just uploaded their dataset. Goal: "${S.goal}". Provide an initial analysis covering:
+1. What this dataset is about (2-3 sentences)
+2. Key structural highlights
+3. Data quality snapshot
+4. 2-3 most interesting initial observations
+5. What to explore next based on their goal
+End with an invitation to ask anything.`);
+}
+
+function send(){
+  const el=document.getElementById('mi'),t=el.value.trim();
+  if(!t)return;el.value='';
+  addMsg(t,'u');callAI(t);
+}
+</script>
+</body>
+</html>
