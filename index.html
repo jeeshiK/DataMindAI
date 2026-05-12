@@ -11,10 +11,24 @@
 html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#07090f;color:#e2e8f0;overflow:hidden}
 .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
 .screen.on{display:flex}
+.logo{font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* KEY SCREEN */
+#sk{flex-direction:column;gap:1.25rem;padding:2rem;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(99,102,241,.1),transparent 70%)}
+.kcard{width:min(480px,100%);background:#0d1117;border:1px solid #1e2a3a;border-radius:20px;padding:2rem;display:flex;flex-direction:column;gap:1rem}
+.kicon{font-size:2.5rem;text-align:center}
+.ktit{font-size:1.25rem;font-weight:700;text-align:center}
+.ksub{color:#64748b;font-size:.82rem;text-align:center;line-height:1.6}
+.kinp{background:#07090f;border:1px solid #1e2a3a;border-radius:10px;padding:.7rem 1rem;color:#e2e8f0;font-size:.85rem;outline:none;width:100%}
+.kinp:focus{border-color:#6366f1}
+.kbtn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;padding:.75rem;border-radius:10px;font-weight:700;cursor:pointer;font-size:.9rem}
+.kbtn:hover{opacity:.9}
+.klink{color:#475569;font-size:.73rem;text-align:center}
+.klink a{color:#818cf8;text-decoration:none}
+.kfree{display:inline-block;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:#4ade80;padding:.2rem .6rem;border-radius:6px;font-size:.72rem;font-weight:600;margin-left:.4rem}
 
 /* UPLOAD */
 #su{background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(99,102,241,.1),transparent 70%);flex-direction:column;gap:2rem;padding:2rem}
-.logo{font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .ubox{width:min(540px,100%);border:2px dashed #2d3748;border-radius:20px;padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:.25s;background:#0d1117}
 .ubox:hover,.ubox.drag{border-color:#6366f1;background:rgba(99,102,241,.05)}
 .ui{font-size:2.8rem;margin-bottom:1rem}
@@ -75,8 +89,6 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 .cbar{height:3px;background:#1a2035;border-radius:2px;overflow:hidden}
 .cfill{height:100%;background:linear-gradient(90deg,#6366f1,#06b6d4);border-radius:2px}
 .cmt{font-size:.68rem;color:#475569}
-
-/* CHAT */
 #ca{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .ch{padding:.9rem 1.25rem;border-bottom:1px solid #1a2035;display:flex;align-items:center;gap:.75rem;background:#0b0e16}
 .chav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff}
@@ -108,28 +120,27 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 .inrow{padding:.85rem 1.25rem;display:flex;gap:.65rem;align-items:center;border-top:1px solid #1a2035;background:#0b0e16}
 #mi{flex:1;background:#0d1117;border:1px solid #1a2035;border-radius:10px;padding:.6rem 1rem;color:#e2e8f0;font-size:.85rem;outline:none;transition:.2s}
 #mi:focus{border-color:#6366f1}
-#sb2{width:38px;height:38px;border-radius:10px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+#sb2{width:38px;height:38px;border-radius:10px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 #sb2:hover{transform:scale(1.06)}
-
 @media(max-width:650px){#sb{display:none}}
 </style>
 </head>
 <body>
 
-<div id="sk" class="screen on" style="flex-direction:column;gap:1.25rem;padding:2rem">
-  <div class="logo">⚡ DataMind AI</div>
-  <div style="text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:.75rem">🔑</div>
-    <div style="font-size:1.3rem;font-weight:700;margin-bottom:.4rem">Enter your Anthropic API Key</div>
-    <div style="color:#64748b;font-size:.85rem;margin-bottom:1.5rem">Your key is only stored in memory — never saved or sent anywhere except Anthropic's API</div>
-  </div>
-  <div style="width:min(480px,100%);display:flex;flex-direction:column;gap:.75rem">
-    <input id="ki" type="password" placeholder="sk-ant-api03-..." style="background:#0d1117;border:1px solid #1e2a3a;border-radius:10px;padding:.75rem 1rem;color:#e2e8f0;font-size:.88rem;outline:none;width:100%" onkeydown="if(event.key==='Enter')setKey()"/>
-    <button onclick="setKey()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;padding:.75rem;border-radius:10px;font-weight:700;cursor:pointer;font-size:.95rem">Start Analyzing →</button>
-    <div style="color:#475569;font-size:.75rem;text-align:center">Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:#818cf8">console.anthropic.com</a> → API Keys</div>
+<!-- KEY SCREEN -->
+<div id="sk" class="screen on">
+  <div class="logo" style="position:absolute;top:2rem;left:50%;transform:translateX(-50%)">⚡ DataMind AI</div>
+  <div class="kcard">
+    <div class="kicon">🔑</div>
+    <div class="ktit">Enter your Gemini API Key <span class="kfree">FREE</span></div>
+    <div class="ksub">Google Gemini is completely free to use.<br/>Your key stays in memory only — never stored or shared.</div>
+    <input class="kinp" id="ki" type="password" placeholder="AIzaSy..." onkeydown="if(event.key==='Enter')setKey()"/>
+    <button class="kbtn" onclick="setKey()">Start Analyzing →</button>
+    <div class="klink">Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> → Create API Key</div>
   </div>
 </div>
 
+<!-- UPLOAD -->
 <div id="su" class="screen">
   <div class="logo">⚡ DataMind AI</div>
   <div class="ubox" id="ubox" onclick="document.getElementById('fi').click()">
@@ -142,6 +153,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   <input type="file" id="fi" accept=".csv"/>
 </div>
 
+<!-- ANALYZING -->
 <div id="sa" class="screen">
   <div class="at">🧠 Analyzing your dataset…</div>
   <div class="steps">
@@ -152,6 +164,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   </div>
 </div>
 
+<!-- GOAL -->
 <div id="sg" class="screen">
   <div class="glbl">Dataset Ready</div>
   <div class="gpr" id="gpr"></div>
@@ -177,6 +190,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   </div>
 </div>
 
+<!-- APP -->
 <div id="sa2" class="screen">
   <div id="sb">
     <div class="sbl">⚡ DataMind AI</div>
@@ -206,11 +220,11 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 <script>
 const S={data:[],fields:[],profile:{},domain:'',emoji:'',goal:'',ctx:'',hist:[],cid:0,key:''};
 const DOMS={
-  health:{k:['patient','diagnosis','disease','blood','hospital','age','bmi','glucose','bp','medical','clinical','symptom','treatment','mortality','cancer','diabetes','heart','weight','prescription'],e:'🏥'},
-  finance:{k:['price','revenue','profit','loss','stock','transaction','amount','salary','income','expense','budget','investment','market','trade','bank','loan','credit','balance','payment'],e:'💰'},
-  weather:{k:['temperature','humidity','wind','rain','precipitation','forecast','pressure','cloud','storm','climate','celsius','fahrenheit','weather','dew','visibility'],e:'🌤️'},
-  retail:{k:['product','sales','customer','order','inventory','store','purchase','quantity','category','discount','shipping','review','sku','item','cart'],e:'🛒'},
-  hr:{k:['employee','department','hire','attrition','performance','satisfaction','manager','tenure','promotion','resignation','salary','headcount'],e:'👥'}
+  health:{k:['patient','diagnosis','disease','blood','hospital','age','bmi','glucose','bp','medical','clinical','symptom','treatment','mortality','cancer','diabetes','heart'],e:'🏥'},
+  finance:{k:['price','revenue','profit','loss','stock','transaction','amount','salary','income','expense','budget','investment','market','trade','bank','loan','credit'],e:'💰'},
+  weather:{k:['temperature','humidity','wind','rain','precipitation','forecast','pressure','cloud','storm','climate','celsius','fahrenheit','weather'],e:'🌤️'},
+  retail:{k:['product','sales','customer','order','inventory','store','purchase','quantity','category','discount','shipping','review'],e:'🛒'},
+  hr:{k:['employee','department','hire','attrition','performance','satisfaction','manager','tenure','promotion','resignation'],e:'👥'}
 };
 
 function detectDomain(fields){
@@ -228,8 +242,7 @@ function profileData(data,fields){
   fields.forEach(col=>{
     const vals=data.map(r=>r[col]);
     const filled=vals.filter(v=>v!==null&&v!==undefined&&v!=='');
-    const missing=data.length-filled.length;
-    tm+=missing;
+    const missing=data.length-filled.length;tm+=missing;
     const nums=filled.map(v=>parseFloat(v)).filter(n=>!isNaN(n));
     const isNum=nums.length/Math.max(filled.length,1)>0.75;
     if(isNum&&nums.length>0){
@@ -258,11 +271,17 @@ function buildCtx(data,fields,profile,domain,goal){
   return c;
 }
 
-function setKey(){const v=document.getElementById('ki').value.trim();if(!v.startsWith('sk-')){alert('Please enter a valid Anthropic API key starting with sk-');return;}S.key=v;show('su')}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
 
-// Upload
+// KEY
+function setKey(){
+  const v=document.getElementById('ki').value.trim();
+  if(!v){alert('Please enter your Gemini API key.');return;}
+  S.key=v;show('su');
+}
+
+// UPLOAD
 document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
 const ubox=document.getElementById('ubox');
 ubox.addEventListener('dragover',e=>{e.preventDefault();ubox.classList.add('drag')});
@@ -309,8 +328,7 @@ function launch(){
   S.ctx=buildCtx(S.data,S.fields,S.profile,S.domain,S.goal);
   fillSidebar();show('sa2');
   document.getElementById('csub').textContent=`${S.emoji} ${S.domain} · ${S.data.length.toLocaleString()} rows`;
-  setSuggs();
-  initChat();
+  setSuggs();initChat();
 }
 
 function fillSidebar(){
@@ -331,7 +349,7 @@ function fillSidebar(){
 }
 
 function setSuggs(){
-  const s=['What are the key insights?','Show me a distribution chart','Are there missing value issues?','What columns correlate most?','Predict future trends'];
+  const s=['What are the key insights?','Show me a distribution chart','Any missing value issues?','What columns correlate most?','Predict future trends'];
   document.getElementById('suggs').innerHTML=s.map(t=>`<span class="sg" onclick="useSug('${t.replace(/'/g,"\\'")}')"> ${t}</span>`).join('');
 }
 function useSug(t){document.getElementById('mi').value=t;send()}
@@ -344,23 +362,53 @@ ${S.ctx}
 RULES:
 - Answer like a senior data scientist — insightful, clear, plain English
 - Use **bold** for key terms, bullet lists for multiple items
-- When generating charts output EXACTLY: [CHART:{"type":"bar","title":"...","labels":[...],"datasets":[{"label":"...","data":[...]}]}]
-- Chart types: bar, line, pie, doughnut, scatter
+- When generating charts output EXACTLY this format on its own line: [CHART:{"type":"bar","title":"Chart Title","labels":["A","B"],"datasets":[{"label":"Series","data":[10,20]}]}]
+- Chart types supported: bar, line, pie, doughnut
 - Always suggest 1-2 next steps after answering
 - For predictions: reason from data patterns, give a clear estimate with explanation
 - Keep responses focused and scannable
-- Domain detected: ${S.domain}`;
+- Domain: ${S.domain}`;
+}
+
+// Gemini conversation history: roles are "user" and "model"
+async function callAI(q){
+  S.hist.push({role:'user',parts:[{text:q}]});
+  showTyping();
+  try{
+    const r=await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${S.key}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          systemInstruction:{parts:[{text:sysPrompt()}]},
+          contents:S.hist
+        })
+      }
+    );
+    const d=await r.json();
+    killTyping();
+    if(d.error){
+      addMsg(`⚠️ ${d.error.message||'API error'}${d.error.code===400?' — Check your API key.':''}`, 'b');
+      S.hist.pop();return;
+    }
+    const rep=d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if(!rep){addMsg('⚠️ Empty response. Please try again.','b');S.hist.pop();return;}
+    S.hist.push({role:'model',parts:[{text:rep}]});
+    addMsg(rep,'b');
+  }catch(e){
+    killTyping();
+    addMsg(`⚠️ Network error: ${e.message}`,'b');
+    S.hist.pop();
+  }
 }
 
 function addMsg(txt,role){
-  const el=document.createElement('div');
-  el.className=`msg ${role}`;
+  const el=document.createElement('div');el.className=`msg ${role}`;
   if(role==='b'){
     const parts=parseParts(txt);
     let html='';
-    parts.forEach(p=>{
-      if(p.t==='text'&&p.v.trim()) html+=`<div class="mb">${fmt(p.v.trim())}</div>`;
-    });
+    parts.forEach(p=>{if(p.t==='text'&&p.v.trim())html+=`<div class="mb">${fmt(p.v.trim())}</div>`;});
     el.innerHTML=`<div class="mav">AI</div><div class="mc">${html}</div>`;
     document.getElementById('msgs').appendChild(el);
     parts.filter(p=>p.t==='chart').forEach(p=>{
@@ -392,7 +440,7 @@ function parseParts(txt){
 function fmt(t){
   t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   t=t.replace(/^#{1,3} (.*)/gm,'<strong style="display:block;margin:.4rem 0 .2rem;font-size:.9rem">$1</strong>');
-  t=t.replace(/^[-•] (.*)/gm,'<li>$1</li>');
+  t=t.replace(/^[-•*] (.*)/gm,'<li>$1</li>');
   t=t.replace(/(<li>.*<\/li>\n?)+/gs,s=>`<ul>${s}</ul>`);
   t=t.replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>');
   if(!t.startsWith('<'))t='<p>'+t+'</p>';
@@ -418,46 +466,8 @@ function showTyping(){
 }
 function killTyping(){const t=document.getElementById('typ');if(t)t.remove()}
 
-async function callAI(q){
-  S.hist.push({role:'user',content:q});
-  showTyping();
-  try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':S.key,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:sysPrompt(),
-        messages:S.hist
-      })
-    });
-    const d=await r.json();
-    killTyping();
-    if(d.type==='error'){
-      const msg=d.error?.message||'API error';
-      addMsg(`⚠️ API Error: ${msg}${d.error?.type==='authentication_error'?' — Please check your API key and try refreshing the page.':''}`, 'b');
-      S.hist.pop();
-      return;
-    }
-    const rep=d.content?.[0]?.text;
-    if(!rep){addMsg('⚠️ Empty response from API. Please try again.','b');S.hist.pop();return;}
-    S.hist.push({role:'assistant',content:rep});
-    addMsg(rep,'b');
-  }catch(e){
-    killTyping();
-    addMsg(`⚠️ Network error: ${e.message}. If you see a CORS error, make sure you're using a valid API key.`,'b');
-    S.hist.pop();
-  }
-}
-
 async function initChat(){
-  await callAI(`The user just uploaded their dataset. Goal: "${S.goal}". Provide an initial analysis:
+  await callAI(`The user just uploaded their dataset. Goal: "${S.goal}". Provide an initial analysis covering:
 1. What this dataset is about (2-3 sentences)
 2. Key structural highlights
 3. Data quality snapshot
